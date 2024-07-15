@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selfie Page</title>
+</head>
+<body>
+    <h1>Selfie Page</h1>
+    <p>Here's your selfie:</p>
+    <img id="selfieImg" src="" alt="Selfie Image">
+
+    <form id="emailForm">
+        <label for="email">Recipient's Email:</label>
+        <input type="email" id="email" name="email" required><br>
+        <button type="submit">Send Email</button>
+    </form>
+
+    <script>
+        // Retrieve the selfie data URL from localStorage
+        const selfieDataUrl = localStorage.getItem('selfie');
+
+        if (selfieDataUrl) {
+            const img = document.getElementById('selfieImg');
+            img.src = selfieDataUrl;
+        } else {
+            // Handle case where no selfie data is available
+            alert('No selfie data found.');
+            // Redirect back to page3.html or handle as needed
+            window.location.href = 'page3.html';
+        }
+
+        // Function to handle form submission and send email
+        document.getElementById('emailForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+            const form = event.target;
+
+            const email = form.email.value.trim();
+
+            // Validate email format (simple validation)
+            if (!validateEmail(email)) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+
+            // Send the email with the selfie attached
+            sendEmail(email);
+        });
+
+        // Function to validate email format
+        function validateEmail(email) {
+            const re = /\S+@\S+\.\S+/;
+            return re.test(email);
+        }
+
+        // Function to send email with selfie attachment
+        function sendEmail(email) {
+            const formData = new FormData();
+            formData.append('email', email);
+            formData.append('image', selfieDataUrl);
+
+            fetch('/send_email_with_selfie', {
+                method: 'POST',
+                body: formData
+            }).then(response => response.text())
+              .then(data => {
+                  alert('Email sent successfully!');
+                  // Implement further functionality if needed
+              }).catch(error => {
+                  console.error('Error:', error);
+                  alert('Failed to send email.');
+              });
+        }
+    </script>
+</body>
+</html>

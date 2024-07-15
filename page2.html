@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selected Options</title>
+</head>
+<body>
+    <h1>Selected Options and User Information</h1>
+    <script>
+        // Function to get URL parameters
+        function getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            const options = params.getAll('option');
+            return options;
+        }
+
+        // Function to display selected options and tally inputs
+        function displayOptions() {
+            const options = getUrlParams();
+            const form = document.getElementById('tallyForm');
+
+            options.forEach(option => {
+                const label = document.createElement('label');
+                label.textContent = option + ": ";
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.name = option;
+                input.min = 0;
+                label.appendChild(input);
+                form.appendChild(label);
+                form.appendChild(document.createElement('br'));
+            });
+        }
+
+        window.onload = displayOptions;
+    </script>
+
+    <form id="tallyForm" action="/submit_tally" method="POST">
+        <h2>User Information</h2>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br>
+
+        <label for="email">Email ID:</label>
+        <input type="email" id="email" name="email" required><br>
+
+        <label for="phone">Phone Number:</label>
+        <input type="tel" id="phone" name="phone" required><br>
+
+        <h2>Options Tally</h2>
+        <button type="submit">Submit Tally</button>
+    </form>
+
+    <script>
+        // Add event listener to form submission to handle redirection to page3
+        document.getElementById('tallyForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+            const form = event.target;
+
+            fetch(form.action, {
+                method: form.method,
+                body: new URLSearchParams(new FormData(form))
+            }).then(response => response.text())
+              .then(() => {
+                  window.location.href = 'page3.html';
+              });
+        });
+    </script>
+</body>
+</html>

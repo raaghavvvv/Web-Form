@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You</title>
+</head>
+<body>
+    <h1>Thank you for your participation!</h1>
+    <p>Would you like a selfie?</p>
+    <button onclick="takeSelfie()">Yes</button>
+    <button onclick="noSelfie()">No</button>
+
+    <div id="camera" style="display:none;">
+        <video id="video" width="640" height="480" autoplay></video>
+        <button id="snap">Snap Photo</button>
+        <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+    </div>
+
+    <script>
+        function takeSelfie() {
+            document.getElementById('camera').style.display = 'block';
+            const video = document.getElementById('video');
+
+            // Get access to the camera
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+                    video.srcObject = stream;
+                    video.play();
+                });
+            }
+
+            document.getElementById('snap').addEventListener('click', function() {
+                const canvas = document.getElementById('canvas');
+                const context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, 640, 480);
+
+                // Convert the canvas to a data URL
+                const dataUrl = canvas.toDataURL('image/png');
+
+                // Store the data URL in localStorage for use in page4.html
+                localStorage.setItem('selfie', dataUrl);
+
+                // Redirect to page4.html
+                window.location.href = 'page4.html';
+            });
+        }
+
+        function noSelfie() {
+            alert('No selfie taken.');
+            window.location.href = 'page5.html';
+        }
+    </script>
+</body>
+</html>
